@@ -1,61 +1,96 @@
-globals [ wealth ]
+globals [gamble_money_spent]
 
-turtles-own [ speed ]
+turtles-own [ wealth gambler_r]
 
 to setup
+  set gamble_money_spent 0
   clear-all
-  crt 100[
-    setxy random-xcor random-ycor
-    set color red
-    set shape "fish"
+  create-turtles 500 [
+    set wealth 100
+    set shape "circle"
+    set color green
     set size 2
-    set heading 90
-    set speed 0.2
+
+    ;; Persoonlijkheid
+    set gambler_r random 10
+    ;; visualize the turtles from left to right in ascending order of wealth
+    setxy wealth random-ycor
   ]
-  ask patches [ set pcolor black ]
-  set wealth 100
+
   reset-ticks
 end
 
 to go
-  ask turtles[
-    fd speed
-    rt 1
-    set heading heading + 1
-    fd speed
-    lt 1
-    fd speed
-    lt 1
-    fd speed
-    rt 1
-    set heading heading - 1
-    set color color + random 3
-  ]
+  ;; transact and then update your location
+  ask turtles with [ wealth > 0 ] [ transact ]
+  ;; prevent wealthy turtles from moving too far to the right
+  ask turtles [ if wealth <= max-pxcor [ set xcor wealth ] ]
+
+  ask turtles [ if wealth > gamble_price and  gambler_r > gambler_rate [ gamble ] ]
+
+  ask turtles with [ wealth > rich ] [ set color red ]
+  ask turtles with [ wealth > poor and wealth < rich] [ set color green ]
+  ask turtles with [ wealth < poor ] [ set color grey ]
+  ask turtles with [ gambler_r > gambler_rate ] [ set shape "square"  set color pink]
+  ask turtles with [ gambler_r < gambler_rate ] [ set shape "circle" ]
   tick
+end
+
+to gamble
+  if random 4 > 2 [
+    set wealth wealth - gamble_price
+    set gamble_money_spent gamble_money_spent + gamble_price
+  if random 10 > 7 [set wealth wealth + 50]
+  ]
 
 end
+
+to transact
+  ;; give a dollar to another turtle
+  set wealth wealth - 1
+  ask one-of other turtles [ set wealth wealth + 1 ]
+end
+
+to-report top-10-pct-wealth
+  report sum [ wealth ] of max-n-of (count turtles * 0.10) turtles [ wealth ]
+end
+
+to-report bottom-50-pct-wealth
+  report sum [ wealth ] of min-n-of (count turtles * 0.50) turtles [ wealth ]
+end
+
+to-report gamblersCount
+  report count turtles with [gambler_r > gambler_rate]
+end
+
+to-report gamble_money_spent_report
+  report gamble_money_spent
+end
+
+; Copyright 2011 Uri Wilensky.
+; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
-225
-10
-726
-512
+233
+16
+1693
+259
 -1
 -1
-14.94
+2.9
 1
 10
 1
 1
 1
 0
+0
+0
 1
-1
-1
--16
-16
--16
-16
+0
+500
+0
+80
 1
 1
 1
@@ -63,11 +98,11 @@ ticks
 30.0
 
 BUTTON
-25
-27
-89
-61
-setup
+7
+46
+96
+79
+NIL
 setup
 NIL
 1
@@ -80,11 +115,11 @@ NIL
 1
 
 BUTTON
-25
-86
-89
-120
-go
+112
+46
+197
+79
+NIL
 go
 T
 1
@@ -94,44 +129,241 @@ NIL
 NIL
 NIL
 NIL
+0
+
+PLOT
+345
+304
+858
+466
+wealth distribution
+wealth
+turtles
+0.0
+500.0
+0.0
+40.0
+true
+false
+"" ""
+PENS
+"current" 5.0 1 -10899396 true "" "set-plot-y-range 0 40\nhistogram [ wealth ] of turtles"
+
+MONITOR
+711
+584
+859
+629
+wealth of bottom 50%
+bottom-50-pct-wealth
+1
+1
+11
+
+MONITOR
+710
+526
+856
+571
+wealth of top 10%
+top-10-pct-wealth
+1
+1
+11
+
+TEXTBOX
+675
+337
+830
+367
+Total wealth = $50,000
+11
+0.0
 1
 
+PLOT
+345
+479
+679
+629
+wealth by percent
+NIL
+NIL
+0.0
+10.0
+0.0
+10000.0
+true
+true
+"" ""
+PENS
+"top 10%" 1.0 0 -2674135 true "" "plot top-10-pct-wealth"
+"bottom 50%" 1.0 0 -13345367 true "" "plot bottom-50-pct-wealth"
+
+SLIDER
+23
+120
+195
+153
+Rich
+Rich
+0
+500
+217.0
+1
+1
+$
+HORIZONTAL
+
+SLIDER
+24
+165
+196
+198
+poor
+poor
+0
+250
+51.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+24
+217
+196
+250
+gambler_rate
+gambler_rate
+0
+10
+8.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+26
+274
+198
+307
+gamble_price
+gamble_price
+0
+20
+20.0
+1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+711
+478
+858
+523
+gamblers
+gamblersCount
+17
+1
+11
+
+MONITOR
+875
+489
+975
+534
+gambled money
+gamble_money_spent_report
+17
+1
+11
+
 @#$#@#$#@
+## ACKNOWLEDGMENT
+
+This model is from Chapter Two of the book "Introduction to Agent-Based Modeling: Modeling Natural, Social and Engineered Complex Systems with NetLogo", by Uri Wilensky & William Rand.
+
+* Wilensky, U. & Rand, W. (2015). Introduction to Agent-Based Modeling: Modeling Natural, Social and Engineered Complex Systems with NetLogo. Cambridge, MA. MIT Press.
+
+This model is in the IABM Textbook folder of the NetLogo Models Library. The model, as well as any updates to the model, can also be found on the textbook website: http://www.intro-to-abm.com/.
+
 ## WHAT IS IT?
 
-first model to explore NetLogo (v1)
+This model is a very simple model of economic exchange.  It is a thought experiment of  a world where, in every time step, each person gives one dollar to one other person (at random) if they have any money to give.  If they have no money then they do not give out any money.
 
 ## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+The SETUP for the model creates 500 agents, and then gives them each 100 dollars.  At each tick, they give one dollar to another agent if they can.  If they have no money then they do nothing. Each agent also moves to an x-coordinate equal to its wealth.
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
+Press SETUP to setup the model, then press GO to watch the model develop.
 
 ## THINGS TO NOTICE
 
-(suggested things for the user to notice while running the model)
+Examine the various graphs and see how the model unfolds. Let it run for many ticks. The WEALTH DISTRIBUTION graph will change shape dramatically as time goes on. What happens to the WEALTH BY PERCENT graph over time?
 
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+Try running the model for many thousands of ticks. Does the distribution stabilize? How can you measure stabilization? Keep track of some individual agents. How do they move?
 
 ## EXTENDING THE MODEL
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+Change the number of turtles.  Does this affect the results?
+
+Change the rules so agents can go into debt. Does this affect the results?
+
+Change the basic transaction rule of the model.  What happens if the turtles exchange more than one dollar? How about if they give a random amount to another agent at each tick? Change the rules so that the richer agents have a better chance of being given money? Or a smaller chance? How does this change the results?
 
 ## NETLOGO FEATURES
 
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+NetLogo plots have an auto scaling feature that allows a plot's x range and y range to grow automatically, but not to shrink. We do, however, want the y range of the WEALTH DISTRIBUTION histogram to shrink since we start with all 500 turtles having the same wealth (producing a single high bar in the histogram), but the distribution of wealth eventually flattens to a point where no particular bin has more than 40 turtles in it.
+
+To get NetLogo to correctly adjust the histogram's y range, we use [`set-plot-y-range 0 40`](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#set-plot-y-range) in the histogram's pen update commands and let auto scaling set the maximum higher if needed.
 
 ## RELATED MODELS
 
-(models in the NetLogo Models Library and elsewhere which are of related interest)
+Wealth Distribution.
 
 ## CREDITS AND REFERENCES
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+Models of this kind are described in:
+
+* Dragulescu, A. & V.M. Yakovenko, V.M. (2000).  Statistical Mechanics of Money. European Physics Journal B.
+
+## HOW TO CITE
+
+This model is part of the textbook, “Introduction to Agent-Based Modeling: Modeling Natural, Social and Engineered Complex Systems with NetLogo.”
+
+If you mention this model or the NetLogo software in a publication, we ask that you include the citations below.
+
+For the model itself:
+
+* Wilensky, U. (2011).  NetLogo Simple Economy model.  http://ccl.northwestern.edu/netlogo/models/SimpleEconomy.  Center for Connected Learning and Computer-Based Modeling, Northwestern Institute on Complex Systems, Northwestern University, Evanston, IL.
+
+Please cite the NetLogo software as:
+
+* Wilensky, U. (1999). NetLogo. http://ccl.northwestern.edu/netlogo/. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
+
+Please cite the textbook as:
+
+* Wilensky, U. & Rand, W. (2015). Introduction to Agent-Based Modeling: Modeling Natural, Social and Engineered Complex Systems with NetLogo. Cambridge, MA. MIT Press.
+
+## COPYRIGHT AND LICENSE
+
+Copyright 2011 Uri Wilensky.
+
+![CC BY-NC-SA 3.0](http://ccl.northwestern.edu/images/creativecommons/byncsa.png)
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License.  To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+
+Commercial licenses are also available. To inquire about commercial licenses, please contact Uri Wilensky at uri@northwestern.edu.
+
+<!-- 2011 -->
 @#$#@#$#@
 default
 true
@@ -299,17 +531,6 @@ true
 0
 Line -7500403 true 150 0 150 150
 
-p
-true
-0
-Circle -7500403 true true 71 71 67
-Circle -7500403 true true 71 161 67
-Rectangle -7500403 false true 105 120 195 120
-Line -7500403 true 120 120 240 120
-Line -7500403 true 240 180 120 180
-Circle -7500403 true true 210 120 60
-Line -7500403 true 105 135 105 165
-
 pentagon
 false
 0
@@ -335,22 +556,6 @@ Polygon -7500403 true true 165 180 165 210 225 180 255 120 210 135
 Polygon -7500403 true true 135 105 90 60 45 45 75 105 135 135
 Polygon -7500403 true true 165 105 165 135 225 105 255 45 210 60
 Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
-
-sheep
-false
-15
-Circle -1 true true 203 65 88
-Circle -1 true true 70 65 162
-Circle -1 true true 150 105 120
-Polygon -7500403 true false 218 120 240 165 255 165 278 120
-Circle -7500403 true false 214 72 67
-Rectangle -1 true true 164 223 179 298
-Polygon -1 true true 45 285 30 285 30 240 15 195 45 210
-Circle -1 true true 3 83 150
-Rectangle -1 true true 65 221 80 296
-Polygon -1 true true 195 285 210 285 210 240 240 210 195 210
-Polygon -7500403 true false 276 85 285 105 302 99 294 83
-Polygon -7500403 true false 219 85 210 105 193 99 201 83
 
 square
 false
@@ -436,13 +641,6 @@ Line -7500403 true 40 84 269 221
 Line -7500403 true 40 216 269 79
 Line -7500403 true 84 40 221 269
 
-wolf
-false
-0
-Polygon -16777216 true false 253 133 245 131 245 133
-Polygon -7500403 true true 2 194 13 197 30 191 38 193 38 205 20 226 20 257 27 265 38 266 40 260 31 253 31 230 60 206 68 198 75 209 66 228 65 243 82 261 84 268 100 267 103 261 77 239 79 231 100 207 98 196 119 201 143 202 160 195 166 210 172 213 173 238 167 251 160 248 154 265 169 264 178 247 186 240 198 260 200 271 217 271 219 262 207 258 195 230 192 198 210 184 227 164 242 144 259 145 284 151 277 141 293 140 299 134 297 127 273 119 270 105
-Polygon -7500403 true true -1 195 14 180 36 166 40 153 53 140 82 131 134 133 159 126 188 115 227 108 236 102 238 98 268 86 269 92 281 87 269 103 269 113
-
 x
 false
 0
@@ -451,6 +649,7 @@ Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
 NetLogo 6.1.1
 @#$#@#$#@
+resize-world 0 500 0 500 setup ask turtles [ set size 5 ] repeat 150 [ go ]
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
