@@ -1,4 +1,4 @@
-globals [gamble_money_spent]
+globals [gamble_money_spent goverment_money jackpot]
 
 turtles-own [ wealth gambler_r]
 
@@ -22,7 +22,7 @@ end
 
 to go
   ;; transact and then update your location
-  ask turtles with [ wealth > 0 ] [ transact ]
+  ask turtles with [ wealth > 2 ] [ transact ]
   ;; prevent wealthy turtles from moving too far to the right
   ask turtles [ if wealth <= max-pxcor [ set xcor wealth ] ]
 
@@ -39,15 +39,19 @@ end
 to gamble
   if random 4 > 2 [
     set wealth wealth - gamble_price
-    set gamble_money_spent gamble_money_spent + gamble_price
-  if random 10 > 7 [set wealth wealth + 50]
+    set gamble_money_spent gamble_money_spent + gamble_price / 2
+    set jackpot jackpot + gamble_price / 2
+  if random 10 > 9 [set wealth wealth + jackpot / 3]
+    set jackpot jackpot - jackpot / 3
+
   ]
 
 end
 
 to transact
   ;; give a dollar to another turtle
-  set wealth wealth - 1
+  set wealth wealth - 1 * (1 + tax / 100)
+  set goverment_money goverment_money + 1 * (tax / 100)
   ask one-of other turtles [ set wealth wealth + 1 ]
 end
 
@@ -65,6 +69,14 @@ end
 
 to-report gamble_money_spent_report
   report gamble_money_spent
+end
+
+to-report goverment_money_report
+  report goverment_money
+end
+
+to-report jackpot_report
+  report jackpot
 end
 
 ; Copyright 2011 Uri Wilensky.
@@ -224,7 +236,7 @@ poor
 poor
 0
 250
-51.0
+0.0
 1
 1
 NIL
@@ -239,7 +251,7 @@ gambler_rate
 gambler_rate
 0
 10
-8.0
+7.0
 1
 1
 NIL
@@ -254,7 +266,7 @@ gamble_price
 gamble_price
 0
 20
-20.0
+9.0
 1
 1
 NIL
@@ -278,6 +290,43 @@ MONITOR
 534
 gambled money
 gamble_money_spent_report
+17
+1
+11
+
+MONITOR
+872
+542
+985
+587
+goverment money
+goverment_money_report
+17
+1
+11
+
+SLIDER
+19
+331
+191
+364
+tax
+tax
+0
+100
+0.0
+1
+1
+%
+HORIZONTAL
+
+MONITOR
+880
+601
+974
+646
+jackpot money
+jackpot_report
 17
 1
 11
