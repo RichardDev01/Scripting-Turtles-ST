@@ -1,10 +1,11 @@
-globals [gamble_money_spent goverment_money jackpot]
+globals [gamble_money_spent goverment_money jackpot trades]
 
-turtles-own [ wealth gambler_r]
+turtles-own [ wealth gambler_r salary]
 
 to setup
-  set gamble_money_spent 0
   clear-all
+  set gamble_money_spent 0
+  set trades 0
   create-turtles 500 [
     set wealth 100
     set shape "circle"
@@ -13,6 +14,8 @@ to setup
 
     ;; Persoonlijkheid
     set gambler_r random 10
+
+    set salary random 30
     ;; visualize the turtles from left to right in ascending order of wealth
     setxy wealth random-ycor
   ]
@@ -21,6 +24,8 @@ to setup
 end
 
 to go
+  if ticks mod 30 = 0 [ ask turtles [set wealth wealth + salary]]
+  set jackpot jackpot + goverment_money / 100
   ;; transact and then update your location
   ask turtles with [ wealth > 2 ] [ transact ]
   ;; prevent wealthy turtles from moving too far to the right
@@ -41,8 +46,8 @@ to gamble
     set wealth wealth - gamble_price
     set gamble_money_spent gamble_money_spent + gamble_price / 2
     set jackpot jackpot + gamble_price / 2
-  if random 10 > 9 [set wealth wealth + jackpot / 3]
-    set jackpot jackpot - jackpot / 3
+  if random 100 > 98 [set wealth wealth + jackpot set jackpot jackpot - jackpot ]
+    ;;set jackpot jackpot - jackpot
 
   ]
 
@@ -53,6 +58,7 @@ to transact
   set wealth wealth - 1 * (1 + tax / 100)
   set goverment_money goverment_money + 1 * (tax / 100)
   ask one-of other turtles [ set wealth wealth + 1 ]
+  set trades trades + 1
 end
 
 to-report top-10-pct-wealth
@@ -63,8 +69,28 @@ to-report bottom-50-pct-wealth
   report sum [ wealth ] of min-n-of (count turtles * 0.50) turtles [ wealth ]
 end
 
+to-report NotGamblers
+  report count turtles with [gambler_r < gambler_rate ]
+end
+
+to-report CountRichNotGamblers
+  report count turtles with [gambler_r < gambler_rate and wealth > rich]
+end
+
+to-report CountpoorNotGamblers
+  report count turtles with [gambler_r < gambler_rate and wealth < poor]
+end
+
 to-report gamblersCount
   report count turtles with [gambler_r > gambler_rate]
+end
+
+to-report gamblersCountRich
+  report count turtles with [gambler_r > gambler_rate and wealth > rich]
+end
+
+to-report gamblersCountpoor
+  report count turtles with [gambler_r > gambler_rate and wealth < poor]
 end
 
 to-report gamble_money_spent_report
@@ -77,6 +103,14 @@ end
 
 to-report jackpot_report
   report jackpot
+end
+
+to-report trades_report
+  report trades
+end
+
+to-report runtime
+  report ticks / 365 * 12
 end
 
 ; Copyright 2011 Uri Wilensky.
@@ -162,10 +196,10 @@ PENS
 "current" 5.0 1 -10899396 true "" "set-plot-y-range 0 40\nhistogram [ wealth ] of turtles"
 
 MONITOR
-711
-584
-859
-629
+1074
+391
+1222
+436
 wealth of bottom 50%
 bottom-50-pct-wealth
 1
@@ -173,10 +207,10 @@ bottom-50-pct-wealth
 11
 
 MONITOR
-710
-526
-856
-571
+1076
+298
+1222
+343
 wealth of top 10%
 top-10-pct-wealth
 1
@@ -221,7 +255,7 @@ Rich
 Rich
 0
 500
-217.0
+344.0
 1
 1
 $
@@ -236,7 +270,7 @@ poor
 poor
 0
 250
-0.0
+70.0
 1
 1
 NIL
@@ -266,17 +300,17 @@ gamble_price
 gamble_price
 0
 20
-9.0
+18.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-711
-478
-858
-523
+920
+297
+1054
+342
 gamblers
 gamblersCount
 17
@@ -284,10 +318,10 @@ gamblersCount
 11
 
 MONITOR
-875
-489
-975
-534
+920
+431
+1051
+476
 gambled money
 gamble_money_spent_report
 17
@@ -295,13 +329,13 @@ gamble_money_spent_report
 11
 
 MONITOR
-872
-542
-985
-587
+705
+586
+818
+631
 goverment money
 goverment_money_report
-17
+2
 1
 11
 
@@ -314,20 +348,97 @@ tax
 tax
 0
 100
-0.0
+20.0
 1
 1
 %
 HORIZONTAL
 
 MONITOR
-880
-601
-974
-646
+706
+483
+832
+528
 jackpot money
 jackpot_report
+2
+1
+11
+
+MONITOR
+706
+534
+763
+579
+trades
+trades_report
 17
+1
+11
+
+MONITOR
+920
+342
+1054
+387
+gamblers that are rich
+gamblersCountRich
+17
+1
+11
+
+MONITOR
+920
+387
+1051
+432
+gamblers that are poor
+gamblersCountpoor
+17
+1
+11
+
+MONITOR
+1247
+348
+1382
+393
+Rich People from work
+CountRichNotGamblers
+17
+1
+11
+
+MONITOR
+1247
+298
+1332
+343
+not gamblers
+NotGamblers
+17
+1
+11
+
+MONITOR
+1247
+399
+1460
+444
+People that are poor but not gamble
+CountpoorNotGamblers
+17
+1
+11
+
+MONITOR
+1100
+519
+1192
+564
+months
+runtime
+1
 1
 11
 
