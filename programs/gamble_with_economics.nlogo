@@ -36,8 +36,10 @@ to go
   ask turtles with [ wealth > rich ] [ set color red ]
   ask turtles with [ wealth > poor and wealth < rich] [ set color green ]
   ask turtles with [ wealth < poor ] [ set color grey ]
+
   ask turtles with [ gambler_r > gambler_rate ] [ set shape "square"  set color pink] ;;eigen toevoeging, als de turtle een gokker is, verander het uiterlijk
   ask turtles with [ gambler_r < gambler_rate ] [ set shape "circle" ]
+
   tick
 end
 
