@@ -41,7 +41,7 @@ to go
   tick
 end
 
-;;eigen toevoeging, er is een 50% kans dat een gokker ook echt die dag gaat gokken.. de jackpot heeft een win kans van 2%
+;;eigen toevoeging, er is een 50% kans dat een gokker ook echt die dag gaat gokken.
 to gamble
   if random 4 > 2 [
     set wealth wealth - gamble_price
@@ -54,7 +54,6 @@ to gamble
 
 end
 
-;;eigen toevoeging, bij elke trade komt er ook belasting bovenop
 to transact
   ;; give a dollar to another turtle
   set wealth wealth - 1 * (1 + tax / 100)
