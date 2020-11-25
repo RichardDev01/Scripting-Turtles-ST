@@ -178,10 +178,10 @@ NIL
 0
 
 PLOT
-345
-304
-858
-466
+336
+311
+849
+473
 wealth distribution
 wealth
 turtles
@@ -196,10 +196,10 @@ PENS
 "current" 5.0 1 -10899396 true "" "set-plot-y-range 0 40\nhistogram [ wealth ] of turtles"
 
 MONITOR
-1074
-391
-1222
-436
+1062
+395
+1210
+440
 wealth of bottom 50%
 bottom-50-pct-wealth
 1
@@ -207,10 +207,10 @@ bottom-50-pct-wealth
 11
 
 MONITOR
-1076
-298
-1222
-343
+1064
+302
+1210
+347
 wealth of top 10%
 top-10-pct-wealth
 1
@@ -218,20 +218,20 @@ top-10-pct-wealth
 11
 
 TEXTBOX
-675
-337
-830
-367
+663
+341
+818
+371
 Total wealth = $50,000
 11
 0.0
 1
 
 PLOT
-345
-479
-679
-629
+337
+484
+671
+634
 wealth by percent
 NIL
 NIL
@@ -285,7 +285,7 @@ gambler_rate
 gambler_rate
 0
 10
-7.0
+8.0
 1
 1
 NIL
@@ -307,10 +307,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-920
-297
-1054
-342
+908
+301
+1042
+346
 gamblers
 gamblersCount
 17
@@ -318,10 +318,10 @@ gamblersCount
 11
 
 MONITOR
-920
-431
-1051
-476
+908
+435
+1039
+480
 gambled money
 gamble_money_spent_report
 17
@@ -329,10 +329,10 @@ gamble_money_spent_report
 11
 
 MONITOR
-705
-586
-818
-631
+693
+590
+806
+635
 goverment money
 goverment_money_report
 2
@@ -355,10 +355,10 @@ tax
 HORIZONTAL
 
 MONITOR
-706
-483
-832
-528
+694
+487
+820
+532
 jackpot money
 jackpot_report
 2
@@ -366,10 +366,10 @@ jackpot_report
 11
 
 MONITOR
-706
-534
-763
-579
+694
+538
+751
+583
 trades
 trades_report
 17
@@ -377,10 +377,10 @@ trades_report
 11
 
 MONITOR
-920
-342
-1054
-387
+908
+346
+1042
+391
 gamblers that are rich
 gamblersCountRich
 17
@@ -388,10 +388,10 @@ gamblersCountRich
 11
 
 MONITOR
-920
-387
-1051
-432
+908
+391
+1039
+436
 gamblers that are poor
 gamblersCountpoor
 17
@@ -399,10 +399,10 @@ gamblersCountpoor
 11
 
 MONITOR
-1247
-348
-1382
-393
+1235
+352
+1370
+397
 Rich People from work
 CountRichNotGamblers
 17
@@ -410,10 +410,10 @@ CountRichNotGamblers
 11
 
 MONITOR
-1247
-298
-1332
-343
+1235
+302
+1320
+347
 not gamblers
 NotGamblers
 17
@@ -421,10 +421,10 @@ NotGamblers
 11
 
 MONITOR
-1247
-399
-1460
-444
+1235
+403
+1448
+448
 People that are poor but not gamble
 CountpoorNotGamblers
 17
@@ -432,10 +432,10 @@ CountpoorNotGamblers
 11
 
 MONITOR
-1100
-519
-1192
-564
+1092
+517
+1184
+562
 months
 runtime
 1
